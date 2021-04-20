@@ -45,12 +45,9 @@ class King(Figure):
         else:
             self.error = "Field does not exist."
 
-
     def validate_move(self, dest_field):
         if dest_field in self.available_moves:
             return "valid"
         else:
             self.error = "Current move is not permitted."
             return "invalid"
-
-
