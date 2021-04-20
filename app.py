@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template, jsonify
-from chess import King
+from models import King
 
 app = Flask(__name__)
 
@@ -24,10 +24,9 @@ def moves(chess_figure, current_field):
         figure = King(current_field, chess_figure)
 
     if figure:
-        available_moves = figure.list_available_moves()
+        figure.list_available_moves()
+        available_moves = figure.available_moves
 
-    # available_moves = ["B3","B3","A3","C1","C3","B2"]
-    # current_field = "B2"
     return_data = {
         "availableMoves": available_moves,
         "error": error,
@@ -41,26 +40,27 @@ def moves(chess_figure, current_field):
 @app.route('/api/v1/<chess_figure>/<current_field>/<dest_field>', methods=['GET'])
 def validation(chess_figure, current_field, dest_field):
     figure = None
-    error = None
     is_valid = None
     if current_field == "b2":
         current_field = [1, 1]
+    if dest_field == "d4":
+        dest_field = [3, 3]
     available_moves = []
 
     if chess_figure == "king":
         figure = King(current_field, chess_figure)
 
     if figure:
-        available_moves = figure.list_available_moves()
-        is_available = figure.validate_move(dest_field)
+        figure.list_available_moves()
+        is_valid = figure.validate_move(dest_field)
 
     current_field = "B2"
-    dest_field = "C2"
+    dest_field = "D4"
 
     return_data = {
         "move": is_valid,
         "figure": figure.name,
-        "error": error,
+        "error": figure.error,
         "currentField": current_field,
         "destField": dest_field
     }

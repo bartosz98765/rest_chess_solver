@@ -1,22 +1,15 @@
 from abc import ABC, abstractmethod
 
-# STARTING_BOARD = [["W", "W", "W", "W", "W", "W", "W", "W"],
-#                   ["W", "W", "W", "W", "W", "W", "W", "W"],
-#                   ["", "", "", "", "", "", "", ""],
-#                   ["", "", "", "", "", "", "", ""],
-#                   ["", "", "", "", "", "", "", ""],
-#                   ["", "", "", "", "", "", "", ""],
-#                   ["B", "B", "B", "B", "B", "B", "B", "B"],
-#                   ["B", "B", "B", "B", "B", "B", "B", "B"]]
-
 
 class Figure(ABC):
     figure_id = 1
+    error = None
 
     def __init__(self, field, name):
         self._field = field if self._field_check(field) else None
         self.name = name
         self.available_moves = []
+        self.error = None
         self.figure_id = Figure.figure_id
         Figure.figure_id += 1
 
@@ -49,10 +42,15 @@ class King(Figure):
             for el in King.KING_MOVES:
                 if 0 <= self.field[0] + el[0] < 8 and 0 <= self.field[1] + el[1] <= 8:
                     self.available_moves.append([a + b for a, b in zip(self.field, el)])
-        return self.available_moves
+        else:
+            self.error = "Field does not exist."
+
 
     def validate_move(self, dest_field):
         if dest_field in self.available_moves:
-            return True
+            return "valid"
         else:
-            return False
+            self.error = "Current move is not permitted."
+            return "invalid"
+
+
