@@ -34,14 +34,17 @@ class Figure(ABC):
             error = "Current move is not permitted"
         return is_valid, error
 
+    def set_available_moves(self, moves):
+        for el in moves:
+            if 0 <= self.field[0] + el[0] < 8 and 0 <= self.field[1] + el[1] < 8:
+                self.available_moves.append(tuple(a + b for a, b in zip(self.field, el)))
+
 
 class King(Figure):
     KING_MOVES = ((1, 1), (1, 0), (1, -1), (0, 1), (0, -1), (-1, 1), (-1, 0), (-1, -1))
 
     def list_available_moves(self):
-        for el in self.KING_MOVES:
-            if 0 <= self.field[0] + el[0] < 8 and 0 <= self.field[1] + el[1] < 8:
-                self.available_moves.append(tuple(a + b for a, b in zip(self.field, el)))
+        self.set_available_moves(self.KING_MOVES)
 
     # def validate_move(self, dest_field):
     #     if dest_field in self.available_moves:
@@ -121,12 +124,10 @@ class Queen(Figure):
 
 
 class Knight(Figure):
-    MOVE_OFFSETS = [(2, 1), (2, -1), (1, 2), (1, -2), (-1, 2), (-1, -2), (-2, 1), (-2, -1)]
+    KNIGHT_MOVES = [(2, 1), (2, -1), (1, 2), (1, -2), (-1, 2), (-1, -2), (-2, 1), (-2, -1)]
 
     def list_available_moves(self):
-        for el in self.MOVE_OFFSETS:
-            if 0 <= self.field[0] + el[0] < 8 and 0 <= self.field[1] + el[1] < 8:
-                self.available_moves.append(tuple(a + b for a, b in zip(self.field, el)))
+        self.set_available_moves(self.KNIGHT_MOVES)
 
     # def validate_move(self, dest_field):
     #     if dest_field in self.available_moves:
@@ -139,7 +140,7 @@ class Knight(Figure):
 
 
 class Pawn(Figure):
-    # CAUTIONS: moves set only for WHITES!
+    # CAUTIONS: set moves only for WHITES!
     # for BLACK have to be set "-" at y-position
     MOVE_OFFSETS = [(0, 1)]
     START_MOVE_OFFSETS = [(0, 1), (0, 2)]
@@ -149,13 +150,9 @@ class Pawn(Figure):
         if self.field[1] < 1:
             return
         elif self.field[1] == 1:
-            moves = self.START_MOVE_OFFSETS
+            self.set_available_moves(self.START_MOVE_OFFSETS)
         else:
-            moves = self.MOVE_OFFSETS
-
-        for el in moves:
-            if 0 <= self.field[0] + el[0] < 8 and 0 <= self.field[1] + el[1] < 8:
-                self.available_moves.append(tuple(a + b for a, b in zip(self.field, el)))
+            self.set_available_moves(self.MOVE_OFFSETS)
 
     # def validate_move(self, dest_field):
     #     if dest_field in self.available_moves:
