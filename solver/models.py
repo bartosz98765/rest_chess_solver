@@ -3,23 +3,22 @@ from abc import ABC, abstractmethod
 
 def set_figure(field, name):
     figure = None
-    if name == 'king':
+    if name == "king":
         figure = King(field, name)
-    if name == 'rook':
+    if name == "rook":
         figure = Rook(field, name)
-    if name == 'bishop':
+    if name == "bishop":
         figure = Bishop(field, name)
-    if name == 'queen':
+    if name == "queen":
         figure = Queen(field, name)
-    if name == 'knight':
+    if name == "knight":
         figure = Knight(field, name)
-    if name == 'pawn':
+    if name == "pawn":
         figure = Pawn(field, name)
     return figure
 
 
 class Figure(ABC):
-
     def __init__(self, field, name):
         self._field = field if self._field_check(field) else None
         self.name = name
@@ -53,7 +52,9 @@ class Figure(ABC):
     def set_available_moves(self, moves):
         for el in moves:
             if 0 <= self.field[0] + el[0] < 8 and 0 <= self.field[1] + el[1] < 8:
-                self.available_moves.append(tuple(a + b for a, b in zip(self.field, el)))
+                self.available_moves.append(
+                    tuple(a + b for a, b in zip(self.field, el))
+                )
 
     def set_hor_ver_moves(self):
         # horizontal moves
@@ -66,9 +67,13 @@ class Figure(ABC):
     def set_diagonally_moves(self):
         x_offset = self.field[1] - self.field[0]
         y_offset = sum(self.field)
-        rightup_moves = [(x - x_offset, x) for x in range(0, 8) if 0 <= x - x_offset < 8]
+        rightup_moves = [
+            (x - x_offset, x) for x in range(0, 8) if 0 <= x - x_offset < 8
+        ]
         rightup_moves.remove(self.field)
-        leftdown_moves = [(x, y_offset - x) for x in range(0, 8) if 0 <= y_offset - x < 8]
+        leftdown_moves = [
+            (x, y_offset - x) for x in range(0, 8) if 0 <= y_offset - x < 8
+        ]
         leftdown_moves.remove(self.field)
         self.available_moves += rightup_moves + leftdown_moves
 
@@ -81,26 +86,32 @@ class King(Figure):
 
 
 class Rook(Figure):
-
     def list_available_moves(self):
         self.set_hor_ver_moves()
 
 
 class Bishop(Figure):
-
     def list_available_moves(self):
         self.set_diagonally_moves()
 
 
 class Queen(Figure):
-
     def list_available_moves(self):
         self.set_diagonally_moves()
         self.set_hor_ver_moves()
 
 
 class Knight(Figure):
-    KNIGHT_MOVES = [(2, 1), (2, -1), (1, 2), (1, -2), (-1, 2), (-1, -2), (-2, 1), (-2, -1)]
+    KNIGHT_MOVES = (
+        (2, 1),
+        (2, -1),
+        (1, 2),
+        (1, -2),
+        (-1, 2),
+        (-1, -2),
+        (-2, 1),
+        (-2, -1),
+    )
 
     def list_available_moves(self):
         self.set_available_moves(self.KNIGHT_MOVES)

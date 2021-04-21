@@ -5,12 +5,12 @@ from solver.models import set_figure
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route("/")
 def hello_world():
-    return 'Hello World!'
+    return "Hello World!"
 
 
-@app.route('/api/v1/<chess_figure>/<current_field>', methods=['GET'])
+@app.route("/api/v1/<chess_figure>/<current_field>", methods=["GET"])
 def moves(chess_figure, current_field):
     available_moves_readable = []
     status_code = 200
@@ -39,7 +39,7 @@ def moves(chess_figure, current_field):
     return jsonify(return_data), status_code
 
 
-@app.route('/api/v1/<chess_figure>/<current_field>/<dest_field>', methods=['GET'])
+@app.route("/api/v1/<chess_figure>/<current_field>/<dest_field>", methods=["GET"])
 def validation(chess_figure, current_field, dest_field):
     is_valid = None
     status_code = 200
@@ -67,5 +67,5 @@ def validation(chess_figure, current_field, dest_field):
     return jsonify(return_data), status_code
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
