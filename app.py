@@ -8,6 +8,7 @@ X_CONVERT = {'a': '0', 'b': '1', 'c': '2', 'd': '3', 'e': '4', 'f': '5', 'g': '6
 X_INVERTER = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6: 'g', 7: 'h'}
 Y_VALUES = '12345678'
 
+
 class InvalidUsage(Exception):
     status_code = 400
 
@@ -55,16 +56,11 @@ def hello_world():
 
 @app.route('/api/v1/<chess_figure>/<current_field>', methods=['GET'])
 def moves(chess_figure, current_field):
-    figure = None
-    error = None
+    # figure = None
+    # error = None
     available_moves_readable = []
     status_code = 200
 
-
-    # if chess_figure not in CHESS_FIGURES:
-    #     status_code = 404
-    #     error = "Figure does not exit."
-        # raise InvalidUsage(f"Invalid figure. Choose from: {', '.join(CHESS_FIGURES)}", status_code=404)
     field = convert_position(current_field)
     if field:
         if chess_figure == "king":
@@ -73,18 +69,13 @@ def moves(chess_figure, current_field):
             for el in figure.available_moves:
                 available_moves_readable.append(invert_position(el))
             available_moves_readable.sort()
+            error = None
         else:
             status_code = 404
             error = "Figure does not exit."
     else:
         status_code = 409
         error = "Field does not exit."
-
-    # if figure:
-    #     figure.list_available_moves()
-    #     for el in figure.available_moves:
-    #         available_moves_readable.append(invert_position(el))
-    #     available_moves_readable.sort()
 
     return_data = {
         "availableMoves": available_moves_readable,
@@ -102,13 +93,11 @@ def validation(chess_figure, current_field, dest_field):
     if chess_figure not in CHESS_FIGURES:
         raise InvalidUsage(f"Invalid figure. Choose from: {', '.join(CHESS_FIGURES)}", status_code=404)
 
-
     if chess_figure == "king":
         figure = King(convert_position(current_field), chess_figure)
     if figure:
         figure.list_available_moves()
         is_valid = figure.validate_move(convert_position(dest_field))
-
 
     return_data = {
         "move": is_valid,
