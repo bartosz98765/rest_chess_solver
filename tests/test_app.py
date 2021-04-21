@@ -43,13 +43,12 @@ def test_moves_queen(client):
     # correct query
     response = client.get('/api/v1/queen/a1')
     assert response.status_code == 200
-    assert response.get_json() == {'availableMoves':
-                                       ["A2", "A3", "A4", "A5", "A6", "A7", "A8",
-                                        "B1", "B2", "C1", "C3", "D1", "D4",
-                                        "E1", "E5", "F1", "F6", "G1", "G7", "H1", "H8"],
-                                   'currentField': 'A1',
-                                   'error': None,
-                                   'figure': 'queen'}
+    assert response.get_json() == {
+        'availableMoves': ["A2", "A3", "A4", "A5", "A6", "A7", "A8", "B1", "B2", "C1", "C3",
+                           "D1", "D4", "E1", "E5", "F1", "F6", "G1", "G7", "H1", "H8"],
+        'currentField': 'A1',
+        'error': None,
+        'figure': 'queen'}
     # invalid field
     response = client.get('/api/v1/queen/h9')
     assert response.status_code == 409
@@ -79,12 +78,11 @@ def test_moves_rook(client):
     # correct query
     response = client.get('/api/v1/rook/h8')
     assert response.status_code == 200
-    assert response.get_json() == {'availableMoves':
-                                       ["A8", "B8", "C8", "D8", "E8", "F8", "G8",
-                                        "H1", "H2", "H3", "H4", "H5", "H6", "H7"],
-                                   'currentField': 'H8',
-                                   'error': None,
-                                   'figure': 'rook'}
+    assert response.get_json() == {
+        'availableMoves': ["A8", "B8", "C8", "D8", "E8", "F8", "G8", "H1", "H2", "H3", "H4", "H5", "H6", "H7"],
+        'currentField': 'H8',
+        'error': None,
+        'figure': 'rook'}
     # invalid field
     response = client.get('/api/v1/rook/a9')
     assert response.status_code == 409
