@@ -13,14 +13,14 @@ def hello_world():
 @app.route("/api/v1/<chess_figure>/<current_field>", methods=["GET"])
 def moves(chess_figure, current_field):
     available_moves_readable = []
-    status_code = 200
+    status_code = None
     field = convert_position(current_field)
     if field:
         figure = set_figure(field, chess_figure)
         if figure:
             figure.list_available_moves()
-            for el in figure.available_moves:
-                available_moves_readable.append(invert_position(el))
+            for move in figure.available_moves:
+                available_moves_readable.append(invert_position(move))
             available_moves_readable.sort()
             error = None
         else:
@@ -36,20 +36,23 @@ def moves(chess_figure, current_field):
         "figure": chess_figure,
         "currentField": current_field.upper(),
     }
-    return jsonify(return_data), status_code
+    if status_code:
+        return jsonify(return_data), status_code
+    else:
+        return jsonify(return_data)
 
 
 @app.route("/api/v1/<chess_figure>/<current_field>/<dest_field>", methods=["GET"])
 def validation(chess_figure, current_field, dest_field):
     is_valid = None
-    status_code = 200
-    current_field_list = convert_position(current_field)
-    dest_field_list = convert_position(dest_field)
-    if current_field_list and dest_field_list:
-        figure = set_figure(current_field_list, chess_figure)
+    status_code = None
+    current_field_conv = convert_position(current_field)
+    dest_field_conv = convert_position(dest_field)
+    if current_field_conv and dest_field_conv:
+        figure = set_figure(current_field_conv, chess_figure)
         if figure:
             figure.list_available_moves()
-            is_valid, error = figure.validate_move(dest_field_list)
+            is_valid, error = figure.validate_move(dest_field_conv)
         else:
             status_code = 404
             error = "Figure does not exist."
@@ -64,7 +67,10 @@ def validation(chess_figure, current_field, dest_field):
         "currentField": current_field.upper(),
         "destField": dest_field.upper(),
     }
-    return jsonify(return_data), status_code
+    if status_code:
+        return jsonify(return_data), status_code
+    else:
+        return jsonify(return_data)
 
 
 if __name__ == "__main__":
