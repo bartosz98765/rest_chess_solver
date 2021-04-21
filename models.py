@@ -35,7 +35,7 @@ class Figure(ABC):
 
 
 class King(Figure):
-    KING_MOVES = [(1, 1), (1, 0), (1, -1), (0, 1), (0, -1), (-1, 1), (-1, 0), (-1, -1)]
+    KING_MOVES = ((1, 1), (1, 0), (1, -1), (0, 1), (0, -1), (-1, 1), (-1, 0), (-1, -1))
 
     def list_available_moves(self):
         if self.field:
@@ -46,7 +46,7 @@ class King(Figure):
             self.error = "Field does not exist."
 
     def validate_move(self, dest_field):
-        if dest_field in self.available_moves:
+        if list(dest_field) in self.available_moves:
             return "valid"
         else:
             self.error = "Current move is not permitted."
