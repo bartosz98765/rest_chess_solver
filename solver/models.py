@@ -34,7 +34,7 @@ class King(Figure):
 
     def list_available_moves(self):
         for el in self.KING_MOVES:
-            if 0 <= self.field[0] + el[0] < 8 and 0 <= self.field[1] + el[1] <= 8:
+            if 0 <= self.field[0] + el[0] < 8 and 0 <= self.field[1] + el[1] < 8:
                 self.available_moves.append([a + b for a, b in zip(self.field, el)])
 
     def validate_move(self, dest_field):
@@ -106,6 +106,53 @@ class Queen(Figure):
 
     def validate_move(self, dest_field):
         if dest_field in self.available_moves:
+            is_valid = "valid"
+            error = None
+        else:
+            is_valid = "invalid"
+            error = "Current move is not permitted"
+        return is_valid, error
+
+
+class Knight(Figure):
+    MOVE_OFFSETS = [(2, 1), (2, -1), (1, 2), (1, -2), (-1, 2), (-1, -2), (-2, 1), (-2, -1)]
+
+    def list_available_moves(self):
+        for el in self.MOVE_OFFSETS:
+            if 0 <= self.field[0] + el[0] < 8 and 0 <= self.field[1] + el[1] < 8:
+                self.available_moves.append([a + b for a, b in zip(self.field, el)])
+
+    def validate_move(self, dest_field):
+        if list(dest_field) in self.available_moves:
+            is_valid = "valid"
+            error = None
+        else:
+            is_valid = "invalid"
+            error = "Current move is not permitted"
+        return is_valid, error
+
+
+class Pawn(Figure):
+    # CAUTIONS: moves set only for WHITES!
+    # for BLACK have to be set "-" at y-position
+    MOVE_OFFSETS = [(0, 1)]
+    START_MOVE_OFFSETS = [(0, 1), (0, 2)]
+
+    def list_available_moves(self):
+        # CAUTION: todo: error message for first row
+        if self.field[1] < 1:
+            return
+        elif self.field[1] == 1:
+            moves = self.START_MOVE_OFFSETS
+        else:
+            moves = self.MOVE_OFFSETS
+
+        for el in moves:
+            if 0 <= self.field[0] + el[0] < 8 and 0 <= self.field[1] + el[1] < 8:
+                self.available_moves.append([a + b for a, b in zip(self.field, el)])
+
+    def validate_move(self, dest_field):
+        if list(dest_field) in self.available_moves:
             is_valid = "valid"
             error = None
         else:

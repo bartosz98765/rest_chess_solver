@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from solver.models import King, Rook, Bishop, Queen
+from solver.models import King, Rook, Bishop, Queen, Knight, Pawn
 
 app = Flask(__name__)
 
@@ -34,6 +34,10 @@ def set_figure(field, name):
         figure = Bishop(field, name)
     if name == 'queen':
         figure = Queen(field, name)
+    if name == 'knight':
+        figure = Knight(field, name)
+    if name == 'pawn':
+        figure = Pawn(field, name)
     return figure
 
 
