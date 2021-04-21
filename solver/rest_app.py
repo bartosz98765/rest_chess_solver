@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from solver.models import King
+from solver.models import King, Rook, Bishop, Queen
 
 app = Flask(__name__)
 
@@ -13,21 +13,27 @@ Y_VALUES = '12345678'
 def convert_position(position):
     if len(position) == 2 and position[0] in X_CONVERT.keys() and position[1] in Y_VALUES:
         x = int(X_CONVERT[position[0].lower()])
-        y = int(position[1])
+        y = int(position[1])-1
         return x, y
 
 
 # From (7, 4) to "H5"
 def invert_position(position):
     x = X_INVERTER[(position[0])].upper()
-    y = position[1]
+    y = position[1]+1
     return f"{x}{y}"
 
 
 def set_figure(field, name):
-    figure = King(field, name) if name == 'king' else None
-    # figure = Rook(field, name) if name == 'king' else None
-    # figure = King(field, name) if name == 'king' else None
+    figure = None
+    if name == 'king':
+        figure = King(field, name)
+    if name == 'rook':
+        figure = Rook(field, name)
+    if name == 'bishop':
+        figure = Bishop(field, name)
+    if name == 'queen':
+        figure = Queen(field, name)
     return figure
 
 
