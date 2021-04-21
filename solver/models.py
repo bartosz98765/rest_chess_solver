@@ -24,9 +24,15 @@ class Figure(ABC):
     def list_available_moves(self):
         pass
 
-    @abstractmethod
+    # @abstractmethod
     def validate_move(self, dest_field):
-        pass
+        if dest_field in self.available_moves:
+            is_valid = "valid"
+            error = None
+        else:
+            is_valid = "invalid"
+            error = "Current move is not permitted"
+        return is_valid, error
 
 
 class King(Figure):
@@ -35,16 +41,16 @@ class King(Figure):
     def list_available_moves(self):
         for el in self.KING_MOVES:
             if 0 <= self.field[0] + el[0] < 8 and 0 <= self.field[1] + el[1] < 8:
-                self.available_moves.append([a + b for a, b in zip(self.field, el)])
+                self.available_moves.append(tuple(a + b for a, b in zip(self.field, el)))
 
-    def validate_move(self, dest_field):
-        if list(dest_field) in self.available_moves:
-            is_valid = "valid"
-            error = None
-        else:
-            is_valid = "invalid"
-            error = "Current move is not permitted"
-        return is_valid, error
+    # def validate_move(self, dest_field):
+    #     if dest_field in self.available_moves:
+    #         is_valid = "valid"
+    #         error = None
+    #     else:
+    #         is_valid = "invalid"
+    #         error = "Current move is not permitted"
+    #     return is_valid, error
 
 
 class Rook(Figure):
@@ -55,14 +61,14 @@ class Rook(Figure):
         self.available_moves += [(self.field[0], y) for y in range(0, 8)]
         self.available_moves.remove(self.field)
 
-    def validate_move(self, dest_field):
-        if dest_field in self.available_moves:
-            is_valid = "valid"
-            error = None
-        else:
-            is_valid = "invalid"
-            error = "Current move is not permitted"
-        return is_valid, error
+    # def validate_move(self, dest_field):
+    #     if dest_field in self.available_moves:
+    #         is_valid = "valid"
+    #         error = None
+    #     else:
+    #         is_valid = "invalid"
+    #         error = "Current move is not permitted"
+    #     return is_valid, error
 
 
 class Bishop(Figure):
@@ -77,14 +83,14 @@ class Bishop(Figure):
         leftdown_moves.remove(self.field)
         self.available_moves = rightup_moves + leftdown_moves
 
-    def validate_move(self, dest_field):
-        if dest_field in self.available_moves:
-            is_valid = "valid"
-            error = None
-        else:
-            is_valid = "invalid"
-            error = "Current move is not permitted"
-        return is_valid, error
+    # def validate_move(self, dest_field):
+    #     if dest_field in self.available_moves:
+    #         is_valid = "valid"
+    #         error = None
+    #     else:
+    #         is_valid = "invalid"
+    #         error = "Current move is not permitted"
+    #     return is_valid, error
 
 
 class Queen(Figure):
@@ -104,14 +110,14 @@ class Queen(Figure):
         self.available_moves += [(self.field[0], y) for y in range(0, 8)]
         self.available_moves.remove(self.field)
 
-    def validate_move(self, dest_field):
-        if dest_field in self.available_moves:
-            is_valid = "valid"
-            error = None
-        else:
-            is_valid = "invalid"
-            error = "Current move is not permitted"
-        return is_valid, error
+    # def validate_move(self, dest_field):
+    #     if dest_field in self.available_moves:
+    #         is_valid = "valid"
+    #         error = None
+    #     else:
+    #         is_valid = "invalid"
+    #         error = "Current move is not permitted"
+    #     return is_valid, error
 
 
 class Knight(Figure):
@@ -120,16 +126,16 @@ class Knight(Figure):
     def list_available_moves(self):
         for el in self.MOVE_OFFSETS:
             if 0 <= self.field[0] + el[0] < 8 and 0 <= self.field[1] + el[1] < 8:
-                self.available_moves.append([a + b for a, b in zip(self.field, el)])
+                self.available_moves.append(tuple(a + b for a, b in zip(self.field, el)))
 
-    def validate_move(self, dest_field):
-        if list(dest_field) in self.available_moves:
-            is_valid = "valid"
-            error = None
-        else:
-            is_valid = "invalid"
-            error = "Current move is not permitted"
-        return is_valid, error
+    # def validate_move(self, dest_field):
+    #     if dest_field in self.available_moves:
+    #         is_valid = "valid"
+    #         error = None
+    #     else:
+    #         is_valid = "invalid"
+    #         error = "Current move is not permitted"
+    #     return is_valid, error
 
 
 class Pawn(Figure):
@@ -149,13 +155,13 @@ class Pawn(Figure):
 
         for el in moves:
             if 0 <= self.field[0] + el[0] < 8 and 0 <= self.field[1] + el[1] < 8:
-                self.available_moves.append([a + b for a, b in zip(self.field, el)])
+                self.available_moves.append(tuple(a + b for a, b in zip(self.field, el)))
 
-    def validate_move(self, dest_field):
-        if list(dest_field) in self.available_moves:
-            is_valid = "valid"
-            error = None
-        else:
-            is_valid = "invalid"
-            error = "Current move is not permitted"
-        return is_valid, error
+    # def validate_move(self, dest_field):
+    #     if dest_field in self.available_moves:
+    #         is_valid = "valid"
+    #         error = None
+    #     else:
+    #         is_valid = "invalid"
+    #         error = "Current move is not permitted"
+    #     return is_valid, error
