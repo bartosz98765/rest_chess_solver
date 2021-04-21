@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from models import King
+from solver.models import King
 
 app = Flask(__name__)
 
@@ -9,37 +9,12 @@ X_INVERTER = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6: 'g', 7: 'h'}
 Y_VALUES = '12345678'
 
 
-class InvalidUsage(Exception):
-    status_code = 400
-
-    def __init__(self, message, status_code=None, payload=None):
-        Exception.__init__(self)
-        self.message = message
-        if status_code is not None:
-            self.status_code = status_code
-        self.payload = payload
-
-    def to_dict(self):
-        rv = dict(self.payload or ())
-        rv['error'] = self.message
-        return rv
-
-
-@app.errorhandler(InvalidUsage)
-def handle_invalid_usage(error):
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
-    return response
-
-
 # From "H5" to (7, 4)
 def convert_position(position):
-    if len(position) != 2 or position[0] not in X_CONVERT.keys() or position[1] not in Y_VALUES:
-        return None
-
-    x = int(X_CONVERT[position[0].lower()])
-    y = int(position[1])
-    return (x, y)
+    if len(position) == 2 and position[0] in X_CONVERT.keys() and position[1] in Y_VALUES:
+        x = int(X_CONVERT[position[0].lower()])
+        y = int(position[1])
+        return x, y
 
 
 # From (7, 4) to "H5"
@@ -49,6 +24,13 @@ def invert_position(position):
     return f"{x}{y}"
 
 
+def set_figure(field, name):
+    figure = King(field, name) if name == 'king' else None
+    # figure = Rook(field, name) if name == 'king' else None
+    # figure = King(field, name) if name == 'king' else None
+    return figure
+
+
 @app.route('/')
 def hello_world():
     return 'Hello World!'
@@ -56,15 +38,12 @@ def hello_world():
 
 @app.route('/api/v1/<chess_figure>/<current_field>', methods=['GET'])
 def moves(chess_figure, current_field):
-    # figure = None
-    # error = None
     available_moves_readable = []
     status_code = 200
-
     field = convert_position(current_field)
     if field:
-        if chess_figure == "king":
-            figure = King(field, chess_figure)
+        figure = set_figure(field, chess_figure)
+        if figure:
             figure.list_available_moves()
             for el in figure.available_moves:
                 available_moves_readable.append(invert_position(el))
@@ -72,10 +51,10 @@ def moves(chess_figure, current_field):
             error = None
         else:
             status_code = 404
-            error = "Figure does not exit."
+            error = "Figure does not exist."
     else:
         status_code = 409
-        error = "Field does not exit."
+        error = f"Field does not exist."
 
     return_data = {
         "availableMoves": available_moves_readable,
@@ -88,25 +67,30 @@ def moves(chess_figure, current_field):
 
 @app.route('/api/v1/<chess_figure>/<current_field>/<dest_field>', methods=['GET'])
 def validation(chess_figure, current_field, dest_field):
-    figure = None
     is_valid = None
-    if chess_figure not in CHESS_FIGURES:
-        raise InvalidUsage(f"Invalid figure. Choose from: {', '.join(CHESS_FIGURES)}", status_code=404)
-
-    if chess_figure == "king":
-        figure = King(convert_position(current_field), chess_figure)
-    if figure:
-        figure.list_available_moves()
-        is_valid = figure.validate_move(convert_position(dest_field))
+    status_code = 200
+    current_field_list = convert_position(current_field)
+    dest_field_list = convert_position(dest_field)
+    if current_field_list and dest_field_list:
+        figure = set_figure(current_field_list, chess_figure)
+        if figure:
+            figure.list_available_moves()
+            is_valid, error = figure.validate_move(dest_field_list)
+        else:
+            status_code = 404
+            error = "Figure does not exist."
+    else:
+        status_code = 409
+        error = "Field does not exist."
 
     return_data = {
         "move": is_valid,
-        "figure": figure.name,
-        "error": figure.error,
+        "figure": chess_figure,
+        "error": error,
         "currentField": current_field.upper(),
         "destField": dest_field.upper(),
     }
-    return jsonify(return_data)
+    return jsonify(return_data), status_code
 
 
 if __name__ == '__main__':
