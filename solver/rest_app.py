@@ -104,4 +104,4 @@ def validation(chess_figure, current_field, dest_field):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
