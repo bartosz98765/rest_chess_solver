@@ -14,6 +14,17 @@ $ pip install -r requirements.txt
 $ python3 solver/rest_app.py
 ```
 
+## Run Docker
+In repository you have files: Dockerfile and docker-compose.yml.
+
+Build and run server with app:
+
+`$ docker-compose up -d`
+
+Stop sever:
+
+`$ docker-compose down`
+
 ##API url's
 ####Show list of available moves for chess figures. Choose from: king, queen, rook, bishop, knight, pawn.
 
